@@ -432,12 +432,6 @@ def idle_mail_listener(email_config, folder):
             last_email_count = len(msgnums[0].split())
             logger.debug(f"{email_config['EMAIL']} 的 {actual_folder} 中的初始邮件数量: {last_email_count}")
 
-            def callback(args):
-                if args[2]:
-                    logger.debug(f"服务器通知 {email_config['EMAIL']} 的 {actual_folder} 中有变化")
-                    return True
-                return False
-
             stop_event = Event()
 
             while not stop_event.is_set():
@@ -450,7 +444,7 @@ def idle_mail_listener(email_config, folder):
                         last_reconnect_time = time.time()  # 更新最后一次重连时间
                         break  # 跳出内层循环，进行重新连接
 
-                    server.idle(callback=callback, timeout=60)
+                    server.idle(timeout=60)
 
                     # 检查新邮件
                     _, msgnums = server.search(None, "ALL")
